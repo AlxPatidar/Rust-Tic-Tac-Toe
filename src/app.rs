@@ -67,21 +67,24 @@ impl App {
             KeyCode::Char('j') => self.set_col(self.col.saturating_sub(1)),
             KeyCode::Right => self.set_col((self.col + 1).min(2)),
             KeyCode::Char('l') => self.set_col((self.col + 1).min(2)),
-            KeyCode::Enter => {
-                if vec!['X', 'O'].contains(&self.board[self.row][self.col]) {
-                    self.set_message("Spot already occupied");
-                } else {
-                    if self.current_player == PLAYER_X {
-                        self.set_message(&format!("{}'s turn", PLAYER_X));
-                        self.set_current_player(PLAYER_O)
-                    } else {
-                        self.set_message(&format!("{}'s turn", PLAYER_O));
-                        self.set_current_player(PLAYER_X)
-                    }
-                    self.set_player_choice()
-                }
-            }
+            KeyCode::Enter => self.allow_click(),
+            KeyCode::Char('x') => self.allow_click(),
+            KeyCode::Char('o') => self.allow_click(),
             _ => {}
+        }
+    }
+    fn allow_click(&mut self) {
+        if vec!['X', 'O'].contains(&self.board[self.row][self.col]) {
+            self.set_message("Spot already occupied");
+        } else {
+            if self.current_player == PLAYER_X {
+                self.set_message(&format!("{}'s turn", PLAYER_X));
+                self.set_current_player(PLAYER_O)
+            } else {
+                self.set_message(&format!("{}'s turn", PLAYER_O));
+                self.set_current_player(PLAYER_X)
+            }
+            self.set_player_choice()
         }
     }
     fn check_winner(&self, current_player: char) -> bool {
@@ -147,7 +150,7 @@ impl Widget for &App {
             " Move ".into(),
             "<Arrow/h/j/k/l>".blue().bold(),
             " Select ".into(),
-            "<Enter>".blue().bold(),
+            "<Enter>/x/o".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
         ]);
